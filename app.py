@@ -135,22 +135,6 @@ def checkissplit(mapname):
         if name in mapname:
             return True
 
-
-def read_string_memory(address):
-    data = b""
-    try:
-        while True:
-            byte = cs2.memory.read(address, 1)
-            if byte == b'\0':
-                break
-            data += byte
-            address += 1
-        decoded_data = data.decode('utf-8')
-        return decoded_data
-    except UnicodeDecodeError:
-        return data
-
-
 def readmapfrommem():
     mapNameAddress = pm.read_longlong(mapNameAddressbase + mapNameVal)
     mapname = pm.read_string(mapNameAddress+0x4)
@@ -195,8 +179,8 @@ clock = pygame.time.Clock()
 screen_width, screen_height = 800, 800
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("CS2 Radar")
-font = pygame.font.Font(None, hp_font_size)
-fontt = pygame.font.Font(None, 24)
+font = pygame.font.Font('fonts/SimHei.ttf', hp_font_size)
+fontt = pygame.font.Font('fonts/SimHei.ttf', 24)
 
 rot_plus_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, screen_height-60), (120, 30)), text='ANGLE+90', manager=manager)
 teammates_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((170, screen_height-60), (120, 30)), text='TEAMMATES', manager=manager) 
@@ -206,13 +190,7 @@ running = True
 while running:
     mapname = readmapfrommem()
     if 'empty' in mapname:
-        if altgirlpic_instead_nomappic == 1:
-            png_files = [f for f in os.listdir('data/nomap_pics') if f.endswith('.png')]
-            if png_files:
-                random_file = random.choice(png_files)
-            image = pygame.image.load(f'data/nomap_pics/{random_file}')
-        else:
-            image = pygame.image.load(f'maps/empty/1.png')
+        image = pygame.image.load(f'maps/empty/1.png')
         image = pygame.transform.scale(image, (screen_width, screen_height))
         screen.blit(image, (0, 0))
         pygame.display.flip()
@@ -239,9 +217,7 @@ while running:
                         rot_angle += 90
                     if event.ui_element == teammates_button:
                         toggle_state()
-            elif event.type == VIDEORESIZE:
-                screen_width, screen_height = event.size
-                
+
         manager.update(time_delta)
 
         screen.fill((0, 0, 0))
